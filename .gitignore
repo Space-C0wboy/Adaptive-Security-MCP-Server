@@ -1,0 +1,25 @@
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Vendor reference material — not redistributed
+Source Material/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
