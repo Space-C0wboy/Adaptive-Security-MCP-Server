@@ -24,8 +24,10 @@ async def test_all_tools_register():
     register_all(mcp)
     tools = await mcp.get_tools()
     assert EXPECTED_TOOLS.issubset(set(tools)), EXPECTED_TOOLS - set(tools)
-    # 15 generated tools + 1 escape hatch.
+    # 15 generated tools + 1 escape hatch — assert the LIVE registry count so a
+    # future regeneration that adds an unexpected tool is caught here too.
     assert len(EXPECTED_TOOLS) == 16
+    assert len(tools) == len(EXPECTED_TOOLS), f"unexpected tools: {set(tools) - EXPECTED_TOOLS}"
 
 
 async def test_get_user_builds_path(monkeypatch):
