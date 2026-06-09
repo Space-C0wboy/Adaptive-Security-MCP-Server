@@ -6,6 +6,11 @@ from adaptive_mcp.config import Config, ConfigError, get_config, reset_config_ca
 
 def _set_env(monkeypatch, **over):
     monkeypatch.delenv("ADAPTIVE_API_KEY", raising=False)
+    monkeypatch.delenv("ADAPTIVE_BASE_URL", raising=False)
+    monkeypatch.delenv("ADAPTIVE_TIMEOUT", raising=False)
+    monkeypatch.delenv("LOG_LEVEL", raising=False)
+    monkeypatch.delenv("MCP_HTTP_HOST", raising=False)
+    monkeypatch.delenv("MCP_HTTP_PORT", raising=False)
     for k, v in over.items():
         monkeypatch.setenv(k, v)
     reset_config_cache()
@@ -48,3 +53,15 @@ def test_bad_timeout(monkeypatch):
 def test_get_config_is_cached(monkeypatch):
     _set_env(monkeypatch, ADAPTIVE_API_KEY="tok")
     assert get_config() is get_config()
+
+
+def test_bad_http_port(monkeypatch):
+    _set_env(monkeypatch, ADAPTIVE_API_KEY="tok", MCP_HTTP_PORT="not-an-int")
+    with pytest.raises(ConfigError):
+        Config.from_env()
+
+
+def test_nonpositive_timeout(monkeypatch):
+    _set_env(monkeypatch, ADAPTIVE_API_KEY="tok", ADAPTIVE_TIMEOUT="0")
+    with pytest.raises(ConfigError):
+        Config.from_env()

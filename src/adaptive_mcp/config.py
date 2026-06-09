@@ -9,6 +9,7 @@ single, already-validated source of truth.
 
 from __future__ import annotations
 
+import math
 import os
 from dataclasses import dataclass
 
@@ -66,6 +67,8 @@ class Config:
             timeout = float(os.getenv("ADAPTIVE_TIMEOUT", "60"))
         except ValueError as e:
             raise ConfigError(f"ADAPTIVE_TIMEOUT must be a number: {e}") from e
+        if not math.isfinite(timeout) or timeout <= 0:
+            raise ConfigError(f"ADAPTIVE_TIMEOUT must be a positive number (got {timeout!r})")
 
         log_level = os.getenv("LOG_LEVEL", "INFO").upper()
         http_host = os.getenv("MCP_HTTP_HOST", "127.0.0.1")
