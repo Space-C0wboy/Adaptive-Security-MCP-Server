@@ -73,8 +73,16 @@ def module_name(tag: str) -> str:
 
 
 def py_type(schema: dict, *, required: bool) -> str:
-    """Map an OpenAPI parameter schema to a Python annotation string."""
+    """Map an OpenAPI parameter schema to a Python annotation string.
+
+    Array params also accept ``str`` because MCP clients sometimes serialize a
+    list argument as a JSON string; ``execute_request`` coerces it back to a list
+    (see ``coerce_json``). Without ``| str`` the transport would reject the string
+    before our code runs.
+    """
     base = _TYPE_MAP.get((schema or {}).get("type"), "Any")
+    if base == "list":
+        return "list | str" if required else "list | str | None"
     return base if required else f"{base} | None"
 
 

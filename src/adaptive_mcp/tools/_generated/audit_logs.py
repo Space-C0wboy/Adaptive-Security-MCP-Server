@@ -35,6 +35,6 @@ def register(mcp: FastMCP) -> None:
         page_size: Annotated[int | None, Field(default=100, description="Query param: page_size (integer)")] = 100,
         start_date: Annotated[str | None, Field(default=None, description="Query param: start_date (string)")] = None,
         end_date: Annotated[str | None, Field(default=None, description="Query param: end_date (string)")] = None,
-        actions: Annotated[list | None, Field(default=None, description="Query param: actions (array)")] = None,
+        actions: Annotated[list | str | None, Field(default=None, description="Query param: actions (array)")] = None,
     ) -> Any:
         return await execute_request("/v2/audit-logs", {"page_after": page_after, "page_size": page_size, "start_date": start_date, "end_date": end_date, "actions": actions})

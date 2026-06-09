@@ -37,7 +37,9 @@ def test_py_type_mapping():
     assert gen.py_type({"type": "string"}, required=False) == "str | None"
     assert gen.py_type({"type": "integer"}, required=False) == "int | None"
     assert gen.py_type({"type": "boolean"}, required=False) == "bool | None"
-    assert gen.py_type({"type": "array"}, required=False) == "list | None"
+    # Array params also accept str (MCP clients may stringify the list).
+    assert gen.py_type({"type": "array"}, required=False) == "list | str | None"
+    assert gen.py_type({"type": "array"}, required=True) == "list | str"
     assert gen.py_type({}, required=False) == "Any | None"
 
 
@@ -63,9 +65,9 @@ def test_generate_writes_modules(tmp_path):
 
     # non-None query-param default is emitted
     assert "default=100" in users
-    # array-typed query param maps to list | None (audit_logs module from the "Audit Logs" tag)
+    # array-typed query param maps to list | str | None (audit_logs module from the "Audit Logs" tag)
     audit = (out_dir / "audit_logs.py").read_text()
-    assert "list | None" in audit
+    assert "list | str | None" in audit
 
 
 def test_generated_modules_compile(tmp_path):

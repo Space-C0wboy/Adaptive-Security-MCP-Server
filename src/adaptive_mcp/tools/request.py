@@ -34,8 +34,16 @@ def register(mcp: FastMCP) -> None:
             Field(description="Request path beginning with '/', e.g. '/v2/phishing/campaigns'."),
         ],
         params: Annotated[
-            dict | None,
-            Field(default=None, description="Optional query parameters as a JSON object."),
+            dict | str | None,
+            Field(
+                default=None,
+                description=(
+                    "Optional query parameters as a JSON object "
+                    "(e.g. {\"page_size\": 50}). A JSON string is also accepted."
+                ),
+            ),
         ] = None,
     ) -> Any:
+        # ``params`` may arrive as a real dict or as a JSON string the MCP client
+        # stringified; ``execute_request`` coerces a string back to a dict.
         return await execute_request(path, params)
