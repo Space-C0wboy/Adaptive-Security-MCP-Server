@@ -61,6 +61,12 @@ def test_generate_writes_modules(tmp_path):
 
     assert docs.read_text().count("list_users") >= 1
 
+    # non-None query-param default is emitted
+    assert "default=100" in users
+    # array-typed query param maps to list | None (audit_logs module from the "Audit Logs" tag)
+    audit = (out_dir / "audit_logs.py").read_text()
+    assert "list | None" in audit
+
 
 def test_generated_modules_compile(tmp_path):
     gen = _load_generator()

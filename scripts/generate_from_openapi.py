@@ -33,7 +33,10 @@ DEFAULT_SPEC = Path("Source Material/openapi.json")
 DEFAULT_OUT_DIR = Path("src/adaptive_mcp/tools/_generated")
 DEFAULT_DOC = Path("docs/ENDPOINTS.md")
 
-_HTTP_METHODS = ("get", "post", "put", "patch", "delete")
+# The Adaptive API is read-only and the client only issues GET, so we generate
+# tools for GET endpoints only. Other methods would produce tools that silently
+# issue a GET — restrict here to make the invariant explicit.
+_HTTP_METHODS = ("get",)
 
 # OpenAPI scalar type -> Python annotation. Unknown/absent types -> Any.
 _TYPE_MAP = {
@@ -94,6 +97,7 @@ def collect(spec: dict) -> dict[str, list[dict]]:
     """
     by_module: dict[str, list[dict]] = {}
     seen: set[str] = set()
+    seen_tool_names: set[str] = set()
     for path in sorted(spec.get("paths", {})):
         item = spec["paths"][path]
         for method in _HTTP_METHODS:
@@ -106,6 +110,12 @@ def collect(spec: dict) -> dict[str, list[dict]]:
             if op_id in seen:
                 raise ValueError(f"Duplicate operationId: {op_id!r}")
             seen.add(op_id)
+            tname = tool_name(op_id)
+            if tname in seen_tool_names:
+                raise ValueError(
+                    f"Duplicate tool name {tname!r} (from operationId {op_id!r})"
+                )
+            seen_tool_names.add(tname)
             tags = op.get("tags") or ["Misc"]
             mod = module_name(tags[0])
             params = op.get("parameters", [])
@@ -220,7 +230,7 @@ def _emit_tool(op: dict) -> str:
 def _emit_module(mod: str, ops: list[dict]) -> str:
     """Render a full generated module's source."""
     tag = ops[0]["tag"] if ops else mod
-    out = _HEADER.format(tag=tag)
+    out = _HEADER.replace("{tag}", tag)
     out += "\n".join(_emit_tool(op) for op in ops)
     return out
 
