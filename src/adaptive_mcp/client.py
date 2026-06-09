@@ -101,10 +101,15 @@ class AdaptiveClient:
                 )
 
     async def close(self) -> None:
-        """Close the connection pool and reset to the disconnected state."""
-        if self._client is not None:
-            await self._client.aclose()
-            self._client = None
+        """Close the connection pool and reset to the disconnected state.
+
+        Concurrency-safe: guarded by the same lock as ``connect()`` so racing
+        callers can't double-close the underlying client.
+        """
+        async with self._connect_lock:
+            if self._client is not None:
+                await self._client.aclose()
+                self._client = None
 
     async def request(self, path: str, *, params: dict[str, Any] | None = None) -> Any:
         """Issue ``GET base_url + path`` with optional query params; return JSON.
@@ -128,7 +133,8 @@ class AdaptiveClient:
         """
         if self._client is None:
             await self.connect()
-        assert self._client is not None
+        if self._client is None:  # pragma: no cover - connect() always sets it
+            raise AdaptiveAPIError(0, "Client failed to initialize")
 
         url = self._config.base_url + path
 

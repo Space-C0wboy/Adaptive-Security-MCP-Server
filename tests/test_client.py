@@ -7,6 +7,15 @@ from adaptive_mcp.config import Config
 from adaptive_mcp.errors import AdaptiveAPIError
 
 
+@pytest.fixture(autouse=True)
+def _no_backoff_sleep(monkeypatch):
+    """Make retry backoff instant so tests don't actually sleep."""
+    async def _instant(_seconds):
+        return None
+    import adaptive_mcp.client as client_mod
+    monkeypatch.setattr(client_mod.asyncio, "sleep", _instant)
+
+
 def _cfg(**over):
     base = dict(
         api_key="tok",
@@ -65,8 +74,9 @@ async def test_raises_after_exhausting_retries_on_5xx(httpx_mock):
     for _ in range(3):
         httpx_mock.add_response(status_code=503)
     client = AdaptiveClient(_cfg())
-    with pytest.raises(AdaptiveAPIError):
+    with pytest.raises(AdaptiveAPIError) as ei:
         await client.request("/v2/users")
+    assert ei.value.status_code == 503
     assert len(httpx_mock.get_requests()) == 3
     await client.close()
 
