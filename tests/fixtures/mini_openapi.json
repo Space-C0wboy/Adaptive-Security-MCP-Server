@@ -1,0 +1,38 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Mini", "version": "v2" },
+  "servers": [{ "url": "https://api.example.com" }],
+  "paths": {
+    "/v2/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List users",
+        "tags": ["Users"],
+        "parameters": [
+          { "name": "page_after", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "page_size", "in": "query", "required": false, "schema": { "type": "integer", "default": 100 } }
+        ]
+      }
+    },
+    "/v2/users/{userId}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Get user details",
+        "tags": ["Users"],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ]
+      }
+    },
+    "/v2/audit-logs": {
+      "get": {
+        "operationId": "listAuditLogs",
+        "summary": "List audit logs",
+        "tags": ["Audit Logs"],
+        "parameters": [
+          { "name": "actions", "in": "query", "required": false, "schema": { "type": "array", "items": { "type": "string" } } }
+        ]
+      }
+    }
+  }
+}
