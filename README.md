@@ -80,11 +80,9 @@ uv tool install adaptive-mcp
 pip install adaptive-mcp
 ```
 
-This installs the `adaptive-mcp` console script.
-
-> [!NOTE]
-> PyPI publishing is pending the first tagged release — until then, install from source
-> (below). A push of a `v*` tag publishes to PyPI via GitHub Actions trusted publishing.
+This installs the `adaptive-mcp` console script. The package is published on
+[PyPI](https://pypi.org/project/adaptive-mcp/); a push of a `v*` tag publishes new releases
+automatically via GitHub Actions trusted publishing.
 
 For development from source:
 
@@ -159,7 +157,7 @@ claude mcp add adaptive \
   -- adaptive-mcp
 ```
 
-From source (not yet installed as a tool):
+Or, to run from source instead of the installed package (e.g. during development):
 
 ```bash
 claude mcp add adaptive \
