@@ -10,9 +10,12 @@ from adaptive_mcp.errors import AdaptiveAPIError
 @pytest.fixture(autouse=True)
 def _no_backoff_sleep(monkeypatch):
     """Make retry backoff instant so tests don't actually sleep."""
+
     async def _instant(_seconds):
         return None
+
     import adaptive_mcp.client as client_mod
+
     monkeypatch.setattr(client_mod.asyncio, "sleep", _instant)
 
 
@@ -82,7 +85,9 @@ async def test_raises_after_exhausting_retries_on_5xx(httpx_mock):
 
 
 async def test_non_json_success_body_raises(httpx_mock):
-    httpx_mock.add_response(status_code=200, text="not json", headers={"content-type": "text/plain"})
+    httpx_mock.add_response(
+        status_code=200, text="not json", headers={"content-type": "text/plain"}
+    )
     client = AdaptiveClient(_cfg())
     with pytest.raises(AdaptiveAPIError):
         await client.request("/v2/users")

@@ -39,7 +39,7 @@ def register(mcp: FastMCP) -> None:
                 default=None,
                 description=(
                     "Optional query parameters as a JSON object "
-                    "(e.g. {\"page_size\": 50}). A JSON string is also accepted."
+                    '(e.g. {"page_size": 50}). A JSON string is also accepted.'
                 ),
             ),
         ] = None,

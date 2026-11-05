@@ -4,16 +4,25 @@ from adaptive_mcp.tools import register_all
 
 EXPECTED_TOOLS = {
     # Audit Logs
-    "list_audit_logs", "get_audit_log",
+    "list_audit_logs",
+    "get_audit_log",
     # Groups
-    "list_groups", "get_group", "get_group_members",
+    "list_groups",
+    "get_group",
+    "get_group_members",
     # Phishing
-    "list_phishing_campaigns", "get_phishing_enrollments", "get_phishing_campaign",
-    "list_campaign_simulations", "get_simulation",
+    "list_phishing_campaigns",
+    "get_phishing_enrollments",
+    "get_phishing_campaign",
+    "list_campaign_simulations",
+    "get_simulation",
     # Training
-    "list_training_campaigns", "get_training_campaign_enrollments", "get_training_campaign",
+    "list_training_campaigns",
+    "get_training_campaign_enrollments",
+    "get_training_campaign",
     # Users
-    "list_users", "get_user",
+    "list_users",
+    "get_user",
     # Escape hatch
     "adaptive_request",
 }

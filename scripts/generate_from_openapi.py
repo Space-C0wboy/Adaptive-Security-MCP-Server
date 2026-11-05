@@ -120,9 +120,7 @@ def collect(spec: dict) -> dict[str, list[dict]]:
             seen.add(op_id)
             tname = tool_name(op_id)
             if tname in seen_tool_names:
-                raise ValueError(
-                    f"Duplicate tool name {tname!r} (from operationId {op_id!r})"
-                )
+                raise ValueError(f"Duplicate tool name {tname!r} (from operationId {op_id!r})")
             seen_tool_names.add(tname)
             tags = op.get("tags") or ["Misc"]
             mod = module_name(tags[0])
@@ -203,10 +201,10 @@ def _emit_tool(op: dict) -> str:
     lines: list[str] = []
     for p in pps:
         ann = py_type(p.get("schema", {}), required=True)
-        pdesc = json.dumps(f"Path param: {p['name']} ({(p.get('schema') or {}).get('type', 'string')})")
-        lines.append(
-            f"        {p['name']}: Annotated[{ann}, Field(description={pdesc})],"
+        pdesc = json.dumps(
+            f"Path param: {p['name']} ({(p.get('schema') or {}).get('type', 'string')})"
         )
+        lines.append(f"        {p['name']}: Annotated[{ann}, Field(description={pdesc})],")
     for p in qps:
         schema = p.get("schema", {})
         ann = py_type(schema, required=False)
@@ -261,7 +259,11 @@ def generate(
 
     # __init__.py importing every module and listing GENERATED_MODULES.
     mods = sorted(by_module)
-    init_lines = ['"""Generated Adaptive tool modules. Do not edit by hand."""', "", "from . import ("]
+    init_lines = [
+        '"""Generated Adaptive tool modules. Do not edit by hand."""',
+        "",
+        "from . import (",
+    ]
     init_lines += [f"    {m}," for m in mods]
     init_lines += [")", "", "GENERATED_MODULES = ["]
     init_lines += [f"    {m}," for m in mods]

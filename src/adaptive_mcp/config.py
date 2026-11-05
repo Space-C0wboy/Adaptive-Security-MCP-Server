@@ -54,9 +54,7 @@ class Config:
             )
 
         base_url = (
-            os.getenv("ADAPTIVE_BASE_URL", "https://api.adaptivesecurity.com")
-            .strip()
-            .rstrip("/")
+            os.getenv("ADAPTIVE_BASE_URL", "https://api.adaptivesecurity.com").strip().rstrip("/")
         )
         if not base_url.startswith(("http://", "https://")):
             raise ConfigError(
