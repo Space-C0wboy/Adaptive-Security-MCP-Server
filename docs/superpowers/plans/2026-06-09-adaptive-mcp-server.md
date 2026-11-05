@@ -264,9 +264,7 @@ class Config:
             )
 
         base_url = (
-            os.getenv("ADAPTIVE_BASE_URL", "https://api.adaptivesecurity.com")
-            .strip()
-            .rstrip("/")
+            os.getenv("ADAPTIVE_BASE_URL", "https://api.adaptivesecurity.com").strip().rstrip("/")
         )
         if not base_url.startswith(("http://", "https://")):
             raise ConfigError(
@@ -491,7 +489,9 @@ async def test_raises_after_exhausting_retries_on_5xx(httpx_mock):
 
 
 async def test_non_json_success_body_raises(httpx_mock):
-    httpx_mock.add_response(status_code=200, text="not json", headers={"content-type": "text/plain"})
+    httpx_mock.add_response(
+        status_code=200, text="not json", headers={"content-type": "text/plain"}
+    )
     client = AdaptiveClient(_cfg())
     with pytest.raises(AdaptiveAPIError):
         await client.request("/v2/users")
@@ -1312,10 +1312,10 @@ def _emit_tool(op: dict) -> str:
     lines: list[str] = []
     for p in pps:
         ann = py_type(p.get("schema", {}), required=True)
-        pdesc = json.dumps(f"Path param: {p['name']} ({(p.get('schema') or {}).get('type', 'string')})")
-        lines.append(
-            f"        {p['name']}: Annotated[{ann}, Field(description={pdesc})],"
+        pdesc = json.dumps(
+            f"Path param: {p['name']} ({(p.get('schema') or {}).get('type', 'string')})"
         )
+        lines.append(f"        {p['name']}: Annotated[{ann}, Field(description={pdesc})],")
     for p in qps:
         schema = p.get("schema", {})
         ann = py_type(schema, required=False)
@@ -1370,7 +1370,11 @@ def generate(
 
     # __init__.py importing every module and listing GENERATED_MODULES.
     mods = sorted(by_module)
-    init_lines = ['"""Generated Adaptive tool modules. Do not edit by hand."""', "", "from . import ("]
+    init_lines = [
+        '"""Generated Adaptive tool modules. Do not edit by hand."""',
+        "",
+        "from . import (",
+    ]
     init_lines += [f"    {m}," for m in mods]
     init_lines += [")", "", "GENERATED_MODULES = ["]
     init_lines += [f"    {m}," for m in mods]
@@ -1484,16 +1488,25 @@ from adaptive_mcp.tools import register_all
 
 EXPECTED_TOOLS = {
     # Audit Logs
-    "list_audit_logs", "get_audit_log",
+    "list_audit_logs",
+    "get_audit_log",
     # Groups
-    "list_groups", "get_group", "get_group_members",
+    "list_groups",
+    "get_group",
+    "get_group_members",
     # Phishing
-    "list_phishing_campaigns", "get_phishing_enrollments", "get_phishing_campaign",
-    "list_campaign_simulations", "get_simulation",
+    "list_phishing_campaigns",
+    "get_phishing_enrollments",
+    "get_phishing_campaign",
+    "list_campaign_simulations",
+    "get_simulation",
     # Training
-    "list_training_campaigns", "get_training_campaign_enrollments", "get_training_campaign",
+    "list_training_campaigns",
+    "get_training_campaign_enrollments",
+    "get_training_campaign",
     # Users
-    "list_users", "get_user",
+    "list_users",
+    "get_user",
     # Escape hatch
     "adaptive_request",
 }
@@ -1924,7 +1937,10 @@ async def main() -> None:
         users = await client.request("/v2/users", params={"page_size": 2})
         print("users keys:", list(users) if isinstance(users, dict) else type(users))
         campaigns = await client.request("/v2/phishing/campaigns", params={"page_size": 2})
-        print("phishing campaigns keys:", list(campaigns) if isinstance(campaigns, dict) else type(campaigns))
+        print(
+            "phishing campaigns keys:",
+            list(campaigns) if isinstance(campaigns, dict) else type(campaigns),
+        )
         print("SMOKE TEST OK")
     finally:
         await shutdown_client()

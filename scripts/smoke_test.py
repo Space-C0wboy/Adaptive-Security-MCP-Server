@@ -17,7 +17,10 @@ async def main() -> None:
         users = await client.request("/v2/users", params={"page_size": 2})
         print("users keys:", list(users) if isinstance(users, dict) else type(users))
         campaigns = await client.request("/v2/phishing/campaigns", params={"page_size": 2})
-        print("phishing campaigns keys:", list(campaigns) if isinstance(campaigns, dict) else type(campaigns))
+        print(
+            "phishing campaigns keys:",
+            list(campaigns) if isinstance(campaigns, dict) else type(campaigns),
+        )
         print("SMOKE TEST OK")
     finally:
         await shutdown_client()
