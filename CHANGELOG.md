@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-11-05
+
+### Changed
+- Moved to **fastmcp 4** (mcp SDK 2.3). Tool input schemas now carry `additionalProperties: false`, so calls with unexpected arguments are rejected.
+
+### CI
+- Workflows run with a read-only token by default; jobs that publish get only the grants they need.
+- ruff pinned at 0.17.3 with a `ruff format --check` step; the codebase is formatted.
+- The release workflow refuses to publish unless the tag matches the `pyproject.toml` version.
+- Dependabot runs weekly with grouped minor/patch updates.
+
 ## [0.1.1] - 2026-06-09
 ### Fixed
 - Coerce JSON-string list/object arguments back into real Python values before
