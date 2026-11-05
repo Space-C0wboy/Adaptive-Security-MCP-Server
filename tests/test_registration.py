@@ -22,7 +22,7 @@ EXPECTED_TOOLS = {
 async def test_all_tools_register():
     mcp = FastMCP(name="test")
     register_all(mcp)
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     assert EXPECTED_TOOLS.issubset(set(tools)), EXPECTED_TOOLS - set(tools)
     # 15 generated tools + 1 escape hatch — assert the LIVE registry count so a
     # future regeneration that adds an unexpected tool is caught here too.
@@ -48,7 +48,7 @@ async def test_get_user_builds_path(monkeypatch):
 
     mcp = FastMCP(name="test")
     register_all(mcp)
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     out = await tools["get_user"].fn(userId="abc")
     assert out == {"id": "abc"}
     assert seen["path"] == "/v2/users/abc"

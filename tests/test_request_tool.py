@@ -15,7 +15,7 @@ async def test_adaptive_request_registered_and_forwards(monkeypatch):
 
     mcp = FastMCP(name="test")
     request_tool.register(mcp)
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     assert "adaptive_request" in tools
 
     out = await tools["adaptive_request"].fn(path="/v2/groups", params={"page_size": 5})
@@ -37,7 +37,7 @@ async def test_adaptive_request_accepts_stringified_params(monkeypatch):
 
     mcp = FastMCP(name="test")
     request_tool.register(mcp)
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     # A JSON string must not be rejected by the tool's parameter validation.
     out = await tools["adaptive_request"].fn(path="/v2/groups", params='{"page_size": 5}')
     assert out == {"ok": True}
