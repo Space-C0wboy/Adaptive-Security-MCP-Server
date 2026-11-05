@@ -9,7 +9,7 @@ async def test_build_server_registers_tools(monkeypatch):
     monkeypatch.setenv("ADAPTIVE_API_KEY", "tok")
     reset_config_cache()
     mcp = server.build_server()
-    tools = await mcp.get_tools()
+    tools = {t.name: t for t in await mcp.list_tools()}
     assert "list_users" in tools
     assert "adaptive_request" in tools
 
